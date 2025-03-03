@@ -1,17 +1,36 @@
 import random
 from datetime import datetime
+import os
+from together import Together
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env
+
+# Initialize the OpenAI client
+client = Together(api_key=os.getenv("API_KEY"))  # Updated initialization
+
+def get_together_response(prompt):
+    response = client.chat.completions.create(  # Updated API call
+        model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content.strip()  # Updated response access
+
+def chatbot():
+    print("Hello! I am TARS. How can I assist you today? (Type 'exit' to quit)")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "exit":
+            print("TARS: Goodbye!")
+            break
+        response = get_together_response(user_input)
+        print(f"TARS: {response}")
 
 # Initialize a variable to store the user's name
 user_name = None
 
 # Define chatbot personality
-humor_level = 0.6 # Adjustable between 0 and 1
-
-# Define responses
-responses = {"hello": ["Hello, human.", "Greetings, Earthling.", "TARS online. How may I assist?"], 
-             "time dilation": ["Time is relative. Where are you going?", "Depends on your velocity and gravity."], 
-             "mission": ["Your mission is to survive. Adapt. Explore."],
-             "joke": ["Knock knock, who's there? Not Cooper, he's in a black hole."]}
+humor_level = 0.6  # Adjustable between 0 and 1
 
 def get_user_name():
     global user_name
@@ -33,31 +52,33 @@ def tars_chatbot(input_text):
     global user_name
     get_user_name()
     if user_name is None:
-        get_user_name() # Ask for user's name at the start!
+        get_user_name()  # Ask for user's name at the start!
 
     input_text = input_text.lower()
 
-    # Check if input matches a key
-    for key in responses:
-        if key in input_text:
-            if key == "joke":
-                return random.choice(responses[key]) if random.random() < humor_level else "Humor setting too low."
-            return random.choice(responses[key])
-            
-    return "I'm afraid I can't do that, Dave. (Oh wait, wrong AI...)"
+    try:
+        response = client.chat.completions.create(  # Updated API call
+            model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+            messages=[{"role": "system", "content": "You are TARS, a highly intelligent and witty AI assistant from Interstellar. You are logical, helpful, and occasionally humorous."},
+                      {"role": "user", "content": input_text}],
+            max_tokens=100
+        )
+        return response.choices[0].message.content.strip()  # Updated response access
 
-def main(): 
-    get_user_name() # Asks user for name at the start
-    print(f"TARS: {get_time_of_day()}, {user_name}.") # Time based greeting
+    except Exception as e:
+        return f"Error: {str(e)}"
 
-# Simple loop to test the bot
-    while True: 
+def main():
+    get_user_name()  # Asks user for name at the start
+    print(f"TARS: {get_time_of_day()}, {user_name}.")  # Time-based greeting
+
+    # Simple loop to test the bot
+    while True:
         user_input = input(f"{user_name if user_name else 'You'}: ")
         if user_input.lower() in ["exit", "quit"]:
             print("TARS: Shutting down...")
             break
         print(f"TARS: {tars_chatbot(user_input)}")
-
 
 # Runs the program
 if __name__ == "__main__":
