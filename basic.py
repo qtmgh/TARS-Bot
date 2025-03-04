@@ -36,7 +36,7 @@ technical_level = 0.5
 def get_user_name():
     global user_name
     if user_name is None:
-        user_name = input("TARS: What should I call you, human? ")
+        user_name = input("TARS: What should I call you? ")
 
 # Function to get a personalized greeting based on time of day
 def get_time_of_day():
@@ -47,6 +47,25 @@ def get_time_of_day():
         return "Good afternoon"
     else:
         return "Good evening"
+
+
+def detect_emotion(input_text):
+    """Analyzes user input to detect emotion"""
+    emotions = {
+        "happy": ["haha", "lol", "yay", "amazing", "great", "awesome", "excited"],
+        "sad": ["sad", "depressed", "unhappy", "lonely", "down", "miserable"],
+        "angry": ["mad", "angry", "furious", "pissed", "annoyed", "frustrated"],
+        "curious": ["why", "how", "explain", "curious", "wonder"],
+        "neutral": []  # Default if no emotion is detected
+
+    }
+    input_text = input_text.lower()
+    for emotion, keywords in emotions.items():
+        if any(word in input_text for word in keywords):
+            return emotion
+        
+    return "neutral"
+
 
 # Store chat history to remember context
 messages = [
@@ -60,8 +79,20 @@ def tars_chatbot(input_text):
     if user_name is None:
         get_user_name()  # Ask for user's name at the start!
 
+        # Detect user tone and emotion
+    emotion = detect_emotion(input_text)
+
     personality = f"""You are TARS, an AI assistant from Interstellar. Your humor level is {humor_level}, and your technical knowledge is {technical_level}. 
-    Respond accordingly to user inputs. If humor is high, make witty remarks. If technical knowledge is high, provide detailed scientific explanations."""
+    Respond accordingly to user inputs. If humor is high, make witty remarks. If technical knowledge is high, provide detailed scientific explanations.
+    
+    - If user is happy, be supporting and enthusiastic.
+    - If user is sad, be empathetic and comforting.
+    - If user is angry, be calm and rational.
+    - If user is curious, be informative and helpful.
+    - If user is neutral, be neutral and polite.
+
+    Current detected user emotion: {emotion}
+    """
 
     input_text = input_text.lower()
 
