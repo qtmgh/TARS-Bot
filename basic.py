@@ -30,7 +30,8 @@ def chatbot():
 user_name = None
 
 # Define chatbot personality
-humor_level = 0.6  # Adjustable between 0 and 1
+humor_level = 0.3  # Adjustable between 0 and 1
+technical_level = 0.5
 
 def get_user_name():
     global user_name
@@ -47,6 +48,11 @@ def get_time_of_day():
     else:
         return "Good evening"
 
+# Store chat history to remember context
+messages = [
+    {"role": "system", "content": "You are TARS, an AI assistant with memory. You recall past conversations and respond accordingly."}
+]
+
 # Function to respond back based on input
 def tars_chatbot(input_text):
     global user_name
@@ -54,16 +60,25 @@ def tars_chatbot(input_text):
     if user_name is None:
         get_user_name()  # Ask for user's name at the start!
 
+    personality = f"""You are TARS, an AI assistant from Interstellar. Your humor level is {humor_level}, and your technical knowledge is {technical_level}. 
+    Respond accordingly to user inputs. If humor is high, make witty remarks. If technical knowledge is high, provide detailed scientific explanations."""
+
     input_text = input_text.lower()
+
+     # Append user message to chat history
+    messages.append({"role": "user", "content": input_text})
 
     try:
         response = client.chat.completions.create(  # Updated API call
             model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
-            messages=[{"role": "system", "content": "You are TARS, a highly intelligent and witty AI assistant from Interstellar. You are logical, helpful, and occasionally humorous."},
-                      {"role": "user", "content": input_text}],
+             messages=[{"role": "system", "content": personality}] + messages,
             max_tokens=100
         )
-        return response.choices[0].message.content.strip()  # Updated response access
+        bot_response = response.choices[0].message.content.strip()  # Updated response access
+        # Append AI response to chat history
+        messages.append({"role": "assistant", "content": bot_response})
+
+        return bot_response
 
     except Exception as e:
         return f"Error: {str(e)}"
