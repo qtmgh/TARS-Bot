@@ -40,7 +40,7 @@ TARS-Bot is an AI-powered chatbot inspired by the TARS robot from *Interstellar*
 Run the chatbot with:
 
 ```sh
-python basic.py
+python3 basic.py
 ```
 
 The chatbot will ask for your name and start responding to inputs dynamically based on the AI model.
