@@ -14,7 +14,7 @@ TARS-Bot is an AI-powered chatbot inspired by the TARS robot from *Interstellar*
 ### Prerequisites
 
 - Python 3.x
-- `pip` installed
+- `pip3` installed
 - A virtual environment (recommended)
 
 ### Steps
@@ -32,7 +32,7 @@ TARS-Bot is an AI-powered chatbot inspired by the TARS robot from *Interstellar*
    ```
 3. Install dependencies:
    ```sh
-   pip install -r requirements.txt
+   pip3 install -r requirements.txt
    ```
 
 ## Usage
