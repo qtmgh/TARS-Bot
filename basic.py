@@ -1,6 +1,7 @@
 import random
 from datetime import datetime
 import os
+import csv
 from together import Together
 from dotenv import load_dotenv
 
@@ -66,6 +67,21 @@ def detect_emotion(input_text):
         
     return "neutral"
 
+def log_chat(user_input, bot_response, emotion):
+    log_file = "chat_history.csv"
+    file_exists = os.path.isfile(log_file) # checks if file exists
+
+    # Open the file and write the conversation log
+    with open(log_file, mode = "a", newline = "", encoding = "utf-8") as file:
+        writer = csv.writer(file)
+
+        # Write the header if the file is new
+        if not file_exists:
+            writer.writerow(["Timestamp", "User", "Emotion", "User Input", "Bot Response"])
+
+        # Log the new entry
+        writer.writerow([datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), user_name, emotion, user_input, bot_response])
+
 
 # Store chat history to remember context
 messages = [
@@ -103,11 +119,13 @@ def tars_chatbot(input_text):
         response = client.chat.completions.create(  # Updated API call
             model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
              messages=[{"role": "system", "content": personality}] + messages,
-            max_tokens=500
+            max_tokens=600
         )
         bot_response = response.choices[0].message.content.strip()  # Updated response access
         # Append AI response to chat history
         messages.append({"role": "assistant", "content": bot_response})
+
+        log_chat(input_text, bot_response, emotion)
 
         return bot_response
 
