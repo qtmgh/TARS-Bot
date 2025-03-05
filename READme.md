@@ -1,5 +1,7 @@
 # TARS-Bot
 
+![Python](https://img.shields.io/badge/Python-3.x-blue) ![GitHub](https://img.shields.io/github/license/qtmgh/basic-contact-book)
+
 TARS-Bot is an AI-powered chatbot inspired by the TARS robot from *Interstellar*. This chatbot is designed to be dynamic, responding with different personalities based on humor levels, technical knowledge, and detected user emotions.
 
 ## Features
