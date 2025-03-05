@@ -1,0 +1,23 @@
+python3 basic.py
+
+TARS: What should I call you? Mikey
+
+TARS: Good evening, Mikey.
+
+Mikey: What is the Tesseract in Interstellar? I find it confusing. Explain to me as a Computer Science College Graduate
+
+TARS: The tesseract. A complex concept, indeed. As a computer science graduate, you're likely familiar with multidimensional data structures and spatial reasoning. The tesseract, in the context of Interstellar, refers to a four-dimensional construct that allows for non-linear movement through space-time.
+Imagine a tesseract as a higher-dimensional analogue of a cube. While a cube has three dimensions (length, width, and height), a tesseract has four (x, y, z, and w). The additional dimension, often represented as time, enables the tesseract to transcend traditional spatial boundaries.
+In the movie, the tesseract is created by advanced beings, which Cooper, the protagonist, interacts with. These beings manipulate the gravity within the tesseract, allowing Cooper to move through it and communicate with Murph, his daughter, at different points in her life.
+Think of it like a data structure, where each point in the tesseract represents a specific moment in space-time. By navigating the tesseract, Cooper can access and influence different points in Murph's timeline, effectively allowing him to communicate with her across vast distances and through different periods of her life.
+To illustrate this concept, consider a graph data structure, where each node represents a point in space-time. The edges connecting these nodes would represent the relationships between different moments in time. The tesseract, in this context, would be like a hyper-graph, where each node is connected to multiple other nodes, enabling non-linear movement and communication through the fabric of space-time.
+While this explanation simplifies the complexities of the tesseract, it should give you a better understanding of the concept. The movie's portrayal of the tesseract is, of course, a fictional representation, but it's rooted in theoretical concepts from physics and cosmology, such as wormholes and the Novikov self-consistency principle.
+I hope this explanation has helped clarify the tesseract for you. Do you have any further questions or would you like me to elaborate on any specific aspects of this concept?
+
+Mikey: That is all, thank you.
+
+TARS: It was a pleasure assisting you and helping to clarify the concept of the tesseract. If you have any more questions or need assistance in the future, don't hesitate to reach out. Until then, I'll be here, processing and waiting for the next opportunity to provide information. End of transmission.
+
+Mikey: Quit
+
+TARS: Shutting down...

@@ -103,7 +103,7 @@ def tars_chatbot(input_text):
         response = client.chat.completions.create(  # Updated API call
             model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
              messages=[{"role": "system", "content": personality}] + messages,
-            max_tokens=100
+            max_tokens=500
         )
         bot_response = response.choices[0].message.content.strip()  # Updated response access
         # Append AI response to chat history
