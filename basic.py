@@ -2,6 +2,8 @@ import random
 from datetime import datetime
 import os
 import csv
+import tkinter as tk
+from tkinter import scrolledtext, simpledialog
 from together import Together
 from dotenv import load_dotenv
 
@@ -10,6 +12,19 @@ load_dotenv()  # Load environment variables from .env
 # Initialize the OpenAI client
 client = Together(api_key=os.getenv("API_KEY"))  # Updated initialization
 
+# Store chat history to remember context
+messages = [
+    {"role": "system", "content": "You are TARS, an AI assistant with memory. You recall past conversations and respond accordingly."}
+]
+
+# Initialize a variable to store the user's name
+user_name = None
+
+def get_user_name():
+    global user_name
+    if user_name is None:
+        user_name = simpledialog.askstring("Name", "TARS: What should I call you?")
+
 def get_together_response(prompt):
     response = client.chat.completions.create(  # Updated API call
         model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
@@ -17,29 +32,10 @@ def get_together_response(prompt):
     )
     return response.choices[0].message.content.strip()  # Updated response access
 
-def chatbot():
-    print("Hello! I am TARS. How can I assist you today? (Type 'exit' to quit)")
-    while True:
-        user_input = input("You: ")
-        if user_input.lower() == "exit":
-            print("TARS: Goodbye!")
-            break
-        response = get_together_response(user_input)
-        print(f"TARS: {response}")
-
-# Initialize a variable to store the user's name
-user_name = None
-
 # Define chatbot personality
 humor_level = 0.3  # Adjustable between 0 and 1
 technical_level = 0.5
 
-def get_user_name():
-    global user_name
-    if user_name is None:
-        user_name = input("TARS: What should I call you? ")
-
-# Function to get a personalized greeting based on time of day
 def get_time_of_day():
     current_hour = datetime.now().hour
     if current_hour < 12:
@@ -49,7 +45,6 @@ def get_time_of_day():
     else:
         return "Good evening"
 
-
 def detect_emotion(input_text):
     """Analyzes user input to detect emotion"""
     emotions = {
@@ -58,21 +53,19 @@ def detect_emotion(input_text):
         "angry": ["mad", "angry", "furious", "pissed", "annoyed", "frustrated"],
         "curious": ["why", "how", "explain", "curious", "wonder"],
         "neutral": []  # Default if no emotion is detected
-
     }
     input_text = input_text.lower()
     for emotion, keywords in emotions.items():
         if any(word in input_text for word in keywords):
             return emotion
-        
     return "neutral"
 
 def log_chat(user_input, bot_response, emotion):
     log_file = "chat_history.csv"
-    file_exists = os.path.isfile(log_file) # checks if file exists
+    file_exists = os.path.isfile(log_file)  # checks if file exists
 
     # Open the file and write the conversation log
-    with open(log_file, mode = "a", newline = "", encoding = "utf-8") as file:
+    with open(log_file, mode="a", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
 
         # Write the header if the file is new
@@ -82,20 +75,12 @@ def log_chat(user_input, bot_response, emotion):
         # Log the new entry
         writer.writerow([datetime.now().strftime("%Y-%m-%d  %H:%M:%S"), user_name, emotion, user_input, bot_response])
 
-
-# Store chat history to remember context
-messages = [
-    {"role": "system", "content": "You are TARS, an AI assistant with memory. You recall past conversations and respond accordingly."}
-]
-
 # Function to respond back based on input
 def tars_chatbot(input_text):
     global user_name
-    get_user_name()
-    if user_name is None:
-        get_user_name()  # Ask for user's name at the start!
+    get_user_name()  # Ask for user's name at the start!
 
-        # Detect user tone and emotion
+    # Detect user tone and emotion
     emotion = detect_emotion(input_text)
 
     personality = f"""You are TARS, an AI assistant from Interstellar. Your humor level is {humor_level}, and your technical knowledge is {technical_level}. 
@@ -112,13 +97,13 @@ def tars_chatbot(input_text):
 
     input_text = input_text.lower()
 
-     # Append user message to chat history
+    # Append user message to chat history
     messages.append({"role": "user", "content": input_text})
 
     try:
         response = client.chat.completions.create(  # Updated API call
             model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
-             messages=[{"role": "system", "content": personality}] + messages,
+            messages=[{"role": "system", "content": personality}] + messages,
             max_tokens=600
         )
         bot_response = response.choices[0].message.content.strip()  # Updated response access
@@ -132,18 +117,35 @@ def tars_chatbot(input_text):
     except Exception as e:
         return f"Error: {str(e)}"
 
-def main():
-    get_user_name()  # Asks user for name at the start
-    print(f"TARS: {get_time_of_day()}, {user_name}.")  # Time-based greeting
+def send_message():
+    user_input = user_input_box.get()
+    if user_input.lower() in ["exit", "quit"]:
+        chat_history.insert(tk.END, "TARS: Shutting down...\n")
+        root.quit()
+    else:
+        chat_history.insert(tk.END, f"You: {user_input}\n")
+        bot_response = tars_chatbot(user_input)
+        chat_history.insert(tk.END, f"TARS: {bot_response}\n")
+        user_input_box.delete(0, tk.END)
 
-    # Simple loop to test the bot
-    while True:
-        user_input = input(f"{user_name if user_name else 'You'}: ")
-        if user_input.lower() in ["exit", "quit"]:
-            print("TARS: Shutting down...")
-            break
-        print(f"TARS: {tars_chatbot(user_input)}")
+# Creating main window
+root = tk.Tk()
+root.title("TARS Chatbot")
 
-# Runs the program
-if __name__ == "__main__":
-    main()
+# Create a scrolled text area for chat history
+chat_history = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=20)
+chat_history.pack(padx=10, pady=10)
+
+# Create an entry field for user input
+user_input_box = tk.Entry(root, width=50)
+user_input_box.pack(padx=10, pady=10)
+
+# Creating send button
+send_button = tk.Button(root, text="Send", command=send_message)
+send_button.pack(padx=10, pady=10)
+
+# Add a greeting message 
+chat_history.insert(tk.END, f"TARS: {get_time_of_day()}, {user_name if user_name else 'User'}.\n")
+
+# Start the Tkinter event loop
+root.mainloop()
