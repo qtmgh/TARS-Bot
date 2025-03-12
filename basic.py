@@ -24,7 +24,7 @@ def get_user_name():
     global user_name
     if user_name is None:
         user_name = simpledialog.askstring("Name", "TARS: What should I call you?")
-
+    
 def get_together_response(prompt):
     response = client.chat.completions.create(  # Updated API call
         model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
@@ -123,7 +123,7 @@ def send_message():
         chat_history.insert(tk.END, "TARS: Shutting down...\n")
         root.quit()
     else:
-        chat_history.insert(tk.END, f"You: {user_input}\n")
+        chat_history.insert(tk.END, f"{user_name}: {user_input}\n")
         bot_response = tars_chatbot(user_input)
         chat_history.insert(tk.END, f"TARS: {bot_response}\n")
         user_input_box.delete(0, tk.END)
