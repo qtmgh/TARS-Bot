@@ -117,7 +117,7 @@ def tars_chatbot(input_text):
     except Exception as e:
         return f"Error: {str(e)}"
 
-def send_message():
+def send_message(event=None):
     user_input = user_input_box.get()
     if user_input.lower() in ["exit", "quit"]:
         chat_history.insert(tk.END, "TARS: Shutting down...\n")
@@ -131,14 +131,23 @@ def send_message():
 # Creating main window
 root = tk.Tk()
 root.title("TARS Chatbot")
+root.configure(bg="#226af0") # background
+
+# Styling
+font_style = ("Ar8ial", 12)
+bot_color = "#00ffcc"
+user_color = "#ffffff"
 
 # Create a scrolled text area for chat history
-chat_history = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=20)
+chat_history = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=20, bg="#252526", fg="white", font =font_style)
 chat_history.pack(padx=10, pady=10)
+chat_history.tag_configure("bot", foreground=bot_color, font=("Arial", 12, "bold"))
+chat_history.tag_configure("user", foreground=user_color, font=("Arial", 12))
 
 # Create an entry field for user input
-user_input_box = tk.Entry(root, width=50)
+user_input_box = tk.Entry(root, width=50, font=font_style, bg="#333", fg="white", insertbackground="white")
 user_input_box.pack(padx=10, pady=10)
+user_input_box.bind("<Return>", send_message) # Binding enter key
 
 # Creating send button
 send_button = tk.Button(root, text="Send", command=send_message)
