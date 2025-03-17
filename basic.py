@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env
 
-# Initialize the OpenAI client
+# Initialize the client
 client = Together(api_key=os.getenv("API_KEY"))  # Updated initialization
 
 # Store chat history to remember context
